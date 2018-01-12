@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>BikeTech - Exemplo</title>
+        <style>
+            html, body, #map {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            
+            
+        </style>
+    </head>
+    <body onload="iniciarMapa()">
+        <div id="map"></div>
+        <div id="detalhes"></div>
+        <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <script>
+            function iniciarMapa() {
+                var map;
+                var mapa = document.querySelector("#map");
+                var detalhes = document.querySelector("#detalhes");
+                map = new google.maps.Map(mapa, {
+                    center: new google.maps.LatLng(-23.64792232790984,-46.59668872883606),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    zoom: 14 
+                });
+                
+                
+                
+                var routes = [
+                    { 
+                        origin: new google.maps.LatLng(-23.64792232790984,-46.59668872883606),
+                		destination: new google.maps.LatLng(-23.60306342113649,-46.602692054244926),
+                        travelMode: google.maps.TravelMode.BICYCLING
+                    },
+                    {
+                		origin: new google.maps.LatLng(-23.60306342113649,-46.602692054244926),
+                		destination: new google.maps.LatLng(-23.536552929531982,-46.646301258895505),
+                        travelMode: google.maps.TravelMode.TRANSIT
+                    }
+                ];
+                
+                routes.forEach(function(route) {
+                    new google.maps.DirectionsService().route(route, function(body) {
+                        var color;
+                        if(route.travelMode == "BICYCLING") {
+                            color = '#17a2b8';
+                        } else if(route.travelMode == "TRANSIT") {
+                            color = '#ffc107';
+                        } else {
+                            color = '#259521';
+                        }
+                        
+                        var pOptions = new google.maps.Polyline({ strokeColor: '#000', });
+                        
+                        var display = new google.maps.DirectionsRenderer({ suppressMarkers: true, polylineOptions: { strokeColor: color, strokeWeight: 7, strokeOpacity: 0.5, } });
+                        display.setPanel(detalhes);
+                        display.setMap(map);
+                        display.setDirections(body);
+                    });
+                });
+            }
+        </script>
+    </body>
+</html>
